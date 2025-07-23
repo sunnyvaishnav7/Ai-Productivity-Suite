@@ -1,6 +1,5 @@
 package com.ai.gemini_chat;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -11,27 +10,43 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import lombok.AllArgsConstructor;
-
 @RestController
-@AllArgsConstructor
-@RequestMapping("/api/qna")
+@RequestMapping("/api")
 public class AIController {
 
     private static final Logger logger = LoggerFactory.getLogger(AIController.class);
+
     private final QnAService qnAService;
 
-    @PostMapping(value = "/ask", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<Map<String, Object>> askQuestion(@RequestBody Map<String, String> payload) {
-        String question = payload.get("question");
-        logger.info("Received question: {}", question);
+    // Constructor injection
+    public AIController(QnAService qnAService) {
+        this.qnAService = qnAService;
+        logger.info("AIController created with QnAService: {}", qnAService != null ? "SUCCESS" : "NULL");
+    }
 
-        String answer = qnAService.getAnswer(question);
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("success", true);
-        response.put("answer", answer);
-
-        return ResponseEntity.ok(response);
+    @PostMapping(value = "/ask", consumes = "application/json")
+    public ResponseEntity<String> askQuestion(@RequestBody Map<String, String> payload) {
+        try {
+            String question = payload.get("question");
+            logger.info("Received question: {}", question);
+            
+            if (question == null || question.trim().isEmpty()) {
+                return ResponseEntity.badRequest().body("Question cannot be empty");
+            }
+            
+            if (qnAService == null) {
+                logger.error("QnAService is null!");
+                return ResponseEntity.internalServerError().body("Service not available");
+            }
+            
+            String answer = qnAService.getAnswer(question);
+            logger.info("Generated answer successfully");
+            return ResponseEntity.ok(answer);
+            
+        } catch (Exception e) {
+            logger.error("Error processing request", e);
+            return ResponseEntity.internalServerError()
+                .body("Error processing request: " + e.getMessage());
+        }
     }
 }
