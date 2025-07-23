@@ -78,9 +78,19 @@ public class QnAService {
                 return "API Error: " + root.get("error").get("message").asText();
             }
 
-            return root.get("candidates").get(0)
-                      .get("content").get("parts").get(0)
-                      .get("text").asText();
+            // return root.get("candidates").get(0)
+            //           .get("content").get("parts").get(0)
+            //           .get("text").asText();
+                      if (root.has("candidates")) {
+            String rawText = root.get("candidates").get(0)
+                    .get("content").get("parts").get(0)
+                    .get("text").asText();
+
+            // ✅ Remove markdown-style code blocks like ```java ... ```
+            return rawText.replaceAll("(?s)```.*?```", "").trim();
+        } else {
+            return "Error: Unexpected API response structure.";
+        }
                       
         } catch (Exception e) {
             logger.error("Parse Error", e);
