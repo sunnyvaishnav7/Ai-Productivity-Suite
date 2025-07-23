@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping
 public class AIController {
 
     private static final Logger logger = LoggerFactory.getLogger(AIController.class);
@@ -24,7 +24,7 @@ public class AIController {
         logger.info("AIController created with QnAService: {}", qnAService != null ? "SUCCESS" : "NULL");
     }
 
-    @PostMapping(value = "/ask", consumes = "application/json")
+    @PostMapping(value = "/", consumes = "application/json")
     public ResponseEntity<String> askQuestion(@RequestBody Map<String, String> payload) {
         try {
             String question = payload.get("question");
