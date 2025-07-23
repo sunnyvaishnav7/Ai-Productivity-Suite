@@ -14,7 +14,7 @@ import Ws from './ws';
 
 const fetchChatResponse = async (question) => {
   try {
-    const response = await fetch('http://localhost:8080/api/qna/ask', {
+    const response = await fetch('http://localhost:8080/api/ask', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
