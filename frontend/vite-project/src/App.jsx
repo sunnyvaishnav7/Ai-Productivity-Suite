@@ -14,7 +14,7 @@ import Ws from './ws';
 
 const fetchChatResponse = async (question) => {
   try {
-    const response = await fetch('http://localhost:8080/api/ask', {
+    const response = await fetch('https://ai-productivity-suite-production.up.railway.app/api/ask', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
